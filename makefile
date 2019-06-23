@@ -7,17 +7,14 @@ OBJS=main.o swtch.o
 PRODUCTS=*.o *.out
 
 #コンパイラ設定
-LIBDIR=
-INCDIR=
+LINKOPTION=
+COMPILEOPTION=
 LIBS=
-CCFLAGS=
 
 #インストール設定
 INSTALLPATH=/usr/local/bin
 
 #ツール定義
-CC=gcc
-AS=gcc -c
 MAKE=make
 RM=rm -f
 DEBUGGER=gdb
@@ -30,14 +27,14 @@ all: $(TARGET)
 
 #ターゲットの作成
 $(TARGET):$(OBJS)
-	$(CC) $^ $(LIBDIR) $(LIBS) -o $@
+	gcc $(LINKOPTION) $^ $(LIBS) -o $@
 
 #サフィックスルール
 .SUFFIXES:.c .o .s
 .c.o:
-	$(CC) $(CCFLAGS) $(INCDIR) $< -c
+	gcc $(COMPILEOPTION) $< -c
 .s.o:
-	$(AS) $<
+	nasm -f elf64 -o $@ $<
 
 #ユーティリティコマンド定義
 rebuild:

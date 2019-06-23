@@ -1,40 +1,40 @@
-	.text
-	.globl swtch
+section .text
+global swtch
 swtch:
-	pushq %rax
-	pushq %rcx
-	pushq %rdx
-	pushq %rbx
-	pushq %rbp
-	pushq %rsi
-	pushq %rdi
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
-	pushq %r12
-	pushq %r13
-	pushq %r14
-	pushq %r15
+	push rax
+	push rcx
+	push rdx
+	push rbx
+	push rbp
+	push rsi
+	push rdi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
 	pushfq
 
-	movq %rsp,(%rdi);
-	movq %rsi,%rsp
+	mov [rdi],rsp
+	mov rsp,rsi
 	
 	popfq
-	popq %r15
-	popq %r14
-	popq %r13
-	popq %r12
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rdi
-	popq %rsi
-	popq %rbp
-	popq %rbx
-	popq %rdx
-	popq %rcx
-	popq %rax
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rdi
+	pop rsi
+	pop rbp
+	pop rbx
+	pop rdx
+	pop rcx
+	pop rax
 	ret
