@@ -52,6 +52,8 @@ void signalhandler(int no){
 	}
 	printf("lock:%d\n",lock);
 */
+	if(lock)return;
+
 	switch(no){
 	case SIGALRM:
 		if(!IsMain){
@@ -76,9 +78,9 @@ int main(){
 	char stack2[0x2000];
 
 	timer.it_interval.tv_sec=0;
-	timer.it_interval.tv_usec=500000;
+	timer.it_interval.tv_usec=100;
 	timer.it_value.tv_sec=0;
-	timer.it_value.tv_usec=500000;
+	timer.it_value.tv_usec=100;
 	setitimer(ITIMER_REAL,&timer,NULL);
 
 	signal(SIGALRM,signalhandler);
@@ -87,7 +89,6 @@ int main(){
 	Ctest2  = mkcontext(test2,stack2,0x2000);
 
 	while(1){
-		printf("main:lock==%d\n",lock);
 		ActiveContext=&Ctest1;
 		IsMain=0;
 		swtch(&Cmain,Ctest1,&lock);
