@@ -5,6 +5,8 @@
 
 long  lock=0;
 struct context *Cmain,*Ctest1,*Ctest2;
+struct context** ActiveContext;
+int IsMain=1;
 
 struct context* mkcontext(void (*func)(),void* stack,int stacksize){
 	struct context* c;
@@ -26,7 +28,6 @@ void test(){
 	for(i=0;1;i++){
 		printf("test1:%d %lf\n",i,A);
 		A=A*A;
-		swtch(&Ctest1,Cmain,&lock);
 	}
 }
 
@@ -36,21 +37,67 @@ void test2(){
 	for(i=0;1;i++){
 		printf("test2:%d %lf\n",i,A);
 		A=A*A;
-		swtch(&Ctest2,Cmain,&lock);
 	}
+}
+
+void signalhandler(int no){
+/*
+	printf("SIGNAL!!:%d\n",no);
+	if(ActiveContext==&Ctest1){
+		printf("ActiveContext:Ctest1\n");
+	}else if(ActiveContext==&Ctest2){
+		printf("ActiveContext:Ctest2\n");
+	}else{
+		printf("ActiveContext:Undefined\n");
+	}
+	printf("lock:%d\n",lock);
+*/
+	switch(no){
+	case SIGALRM:
+		if(!IsMain){
+			IsMain=1;
+			swtch(ActiveContext,Cmain,&lock);
+		}
+		break;
+	}
+}
+
+void unblocksignal(int no){
+	sigset_t st;
+	sigemptyset(&st);
+	sigaddset(&st,no);
+	sigprocmask(SIG_UNBLOCK,&st,NULL);
 }
 
 int main(){
 	int i;
-	char stack1[0x1000];
-	char stack2[0x1000];
+	struct itimerval timer;
+	char stack1[0x2000];
+	char stack2[0x2000];
 
-	Ctest1  = mkcontext(test,stack1,0x1000);
-	Ctest2  = mkcontext(test2,stack2,0x1000);
+	timer.it_interval.tv_sec=0;
+	timer.it_interval.tv_usec=500000;
+	timer.it_value.tv_sec=0;
+	timer.it_value.tv_usec=500000;
+	setitimer(ITIMER_REAL,&timer,NULL);
+
+	signal(SIGALRM,signalhandler);
+
+	Ctest1  = mkcontext(test,stack1,0x2000);
+	Ctest2  = mkcontext(test2,stack2,0x2000);
 
 	while(1){
+		printf("main:lock==%d\n",lock);
+		ActiveContext=&Ctest1;
+		IsMain=0;
 		swtch(&Cmain,Ctest1,&lock);
+		//printf("main:%d\n",__LINE__);
+		unblocksignal(SIGALRM);
+		ActiveContext=&Ctest2;
+		IsMain=0;
 		swtch(&Cmain,Ctest2,&lock);
+		//printf("main:%d\n",__LINE__);
+		unblocksignal(SIGALRM);
 	}
 	return 0;
 }

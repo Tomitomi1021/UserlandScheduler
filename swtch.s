@@ -3,7 +3,7 @@ global swtch
 swtch:
 	push rax
 	mov  rax,1
-	xchg [rdx],rax
+	lock xchg [rdx],rax
 	cmp  rax,1
 	je   swtch_end
 	mov  rax,rdx
