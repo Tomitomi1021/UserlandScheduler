@@ -2,6 +2,11 @@ section .text
 global swtch
 swtch:
 	push rax
+	mov  rax,1
+	xchg [rdx],rax
+	cmp  rax,1
+	je   swtch_end
+	mov  rax,rdx
 	push rcx
 	push rdx
 	push rbx
@@ -35,6 +40,9 @@ swtch:
 	pop rbp
 	pop rbx
 	pop rdx
+	mov rcx,0
+	mov [rax],rcx
 	pop rcx
+swtch_end:
 	pop rax
 	ret

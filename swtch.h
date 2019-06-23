@@ -27,5 +27,5 @@ struct context{
 	QWORD rax;
 	QWORD rip;
 };
-void swtch(struct context** old,struct context* new);
+void swtch(struct context** old,struct context* new,long* lock);
 struct context* mkcontext(void(*func)(),void* stack,int stacksize);

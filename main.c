@@ -3,6 +3,7 @@
 #include<signal.h>
 #include<sys/time.h>
 
+long  lock=0;
 struct context *Cmain,*Ctest1,*Ctest2;
 
 struct context* mkcontext(void (*func)(),void* stack,int stacksize){
@@ -25,7 +26,7 @@ void test(){
 	for(i=0;1;i++){
 		printf("test1:%d %lf\n",i,A);
 		A=A*A;
-		swtch(&Ctest1,Cmain);
+		swtch(&Ctest1,Cmain,&lock);
 	}
 }
 
@@ -35,7 +36,7 @@ void test2(){
 	for(i=0;1;i++){
 		printf("test2:%d %lf\n",i,A);
 		A=A*A;
-		swtch(&Ctest2,Cmain);
+		swtch(&Ctest2,Cmain,&lock);
 	}
 }
 
@@ -48,8 +49,8 @@ int main(){
 	Ctest2  = mkcontext(test2,stack2,0x1000);
 
 	while(1){
-		swtch(&Cmain,Ctest1);
-		swtch(&Cmain,Ctest2);
+		swtch(&Cmain,Ctest1,&lock);
+		swtch(&Cmain,Ctest2,&lock);
 	}
 	return 0;
 }
