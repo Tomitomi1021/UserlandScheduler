@@ -1,7 +1,7 @@
 #ファイル定義
 #TODO:ファイルを定義する。
 TARGET=a.out
-OBJS=main.o swtch.o
+OBJS=main.o swtchC.o swtchAsm.o
 
 #ビルドの過程で生成されるファイル
 PRODUCTS=*.o *.out
@@ -23,7 +23,6 @@ DEBUGGER=gdb
 .PHONY:all clean rebuild
 all: $(TARGET)
 #ファイルの依存関係
-#TODO:ファイルの依存関係を記述する。
 
 #ターゲットの作成
 $(TARGET):$(OBJS)
