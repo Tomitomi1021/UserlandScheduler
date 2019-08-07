@@ -9,7 +9,7 @@ PRODUCTS=*.o *.out
 #コンパイラ設定
 LINKOPTION=
 COMPILEOPTION=
-LIBS=
+LIBS=-lm
 
 #インストール設定
 INSTALLPATH=/usr/local/bin
